@@ -16,11 +16,11 @@ namespace Wonderseat
         {
             _playerLeft = PlayerInput.Instantiate(PlayerPrefab, controlScheme: "WASD", pairWithDevice: Keyboard.current);
             _playerLeft.name = "PlayerLeft";
-            _playerLeft.transform.GetComponent<Rigidbody>().MovePosition(SpawnPointLeft.position);
+            _playerLeft.transform.position = SpawnPointLeft.position;
 
             _playerRight = PlayerInput.Instantiate(PlayerPrefab, controlScheme: "Arrows", pairWithDevice: Keyboard.current); 
             _playerRight.name = "PlayerRight";
-            _playerRight.transform.GetComponent<Rigidbody>().MovePosition(SpawnPointRight.position);
+            _playerRight.transform.position = SpawnPointRight.position;
         }
     }
 }

@@ -10,14 +10,12 @@ namespace Wonderseat
         public float MoveSpeed = 1;
         public float SprintMultiplyer = 1.5f;
         public float JumpSpeed = 10;
-        public float Gravity = -9.8f;
         public LayerMask GroundLayers;
 
         private bool _grounded = false;
         private bool _canApplyAdditionalVerticalSpeed = false;
         private float _timeFromJumpStarted = 0;
         private const float _maxTimeToIncreaseJumpVelocity = 3f;
-        private Vector3 _velocity;
         private Rigidbody _rigidbody;
 
         private void Start()
@@ -32,32 +30,29 @@ namespace Wonderseat
 
         private void Update()
         {
-            JumpAndGravity();
-            SetSpeedX();
+            float speedY = Jump();
+            float speedX = GetSpeedX();
+
+            _rigidbody.velocity = new Vector3(speedX, speedY, _rigidbody.velocity.z);
         }
 
-        private void SetSpeedX()
+        private float Jump()
         {
-            var speed = Input.Sprint ? MoveSpeed * SprintMultiplyer : MoveSpeed;
-            _velocity.x = Input.Move.x * speed;
-            _rigidbody.velocity = new Vector3(_velocity.x, _rigidbody.velocity.y, _rigidbody.velocity.z);
-        }
-
-        private void JumpAndGravity()
-        {
+            float speed = _rigidbody.velocity.y;
             bool jumpStarted = false;
 
             if (Input.Jump)
             {
                 if (_grounded)
                 {
-                    _rigidbody.velocity = new Vector3(_rigidbody.velocity.x, JumpSpeed, _rigidbody.velocity.z);
+                    speed = JumpSpeed;
                     jumpStarted = true;
                     _canApplyAdditionalVerticalSpeed = true;
                 }
                 else if (_timeFromJumpStarted < _maxTimeToIncreaseJumpVelocity && _canApplyAdditionalVerticalSpeed)
                 {
-                   _rigidbody.velocity += new Vector3(0, JumpSpeed / 1000 / (1 + _timeFromJumpStarted), 0);
+                    float acceleration = JumpSpeed / 1000 / (1 + _timeFromJumpStarted);
+                    speed = _rigidbody.velocity.y + acceleration;
                 }
             }
             else
@@ -69,6 +64,16 @@ namespace Wonderseat
             {
                 _timeFromJumpStarted += Time.deltaTime;
             }
+
+            return speed;
+        }
+
+        private float GetSpeedX()
+        {
+            var speed = Input.Sprint ? MoveSpeed * SprintMultiplyer : MoveSpeed;
+            speed *= Input.Move.x;
+
+            return speed;
         }
 
         private void OnCollisionEnter(Collision collision)
