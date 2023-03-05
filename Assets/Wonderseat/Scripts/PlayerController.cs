@@ -18,7 +18,7 @@ namespace Wonderseat
         private const float _maxTimeToIncreaseJumpVelocity = 3f;
         private Rigidbody _rigidbody;
 
-        private void Start()
+        private void Awake()
         {
             if (Input == null)
             {
@@ -26,6 +26,12 @@ namespace Wonderseat
             }
 
             _rigidbody = GetComponent<Rigidbody>();
+        }
+
+        public void Reset(Vector3 position)
+        {
+            transform.position = position;
+            _rigidbody.velocity = Vector3.zero;
         }
 
         private void Update()
@@ -78,19 +84,19 @@ namespace Wonderseat
 
         private void OnCollisionEnter(Collision collision)
         {
-             if ((GroundLayers.value & (1 << collision.gameObject.layer)) > 0) 
-             {
+            if ((GroundLayers.value & (1 << collision.gameObject.layer)) > 0) 
+            {
                 _grounded = true;
                 _timeFromJumpStarted = 0;
-             }
+            }
         }
 
         private void OnCollisionExit(Collision collision)
         {
-             if ((GroundLayers.value & (1 << collision.gameObject.layer)) > 0) 
-             {
+            if ((GroundLayers.value & (1 << collision.gameObject.layer)) > 0) 
+            {
                 _grounded = false;
-             }
+            }
         }
     }
 }
