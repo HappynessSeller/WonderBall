@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 namespace Wonderseat
 {
@@ -6,6 +7,8 @@ namespace Wonderseat
     public class BallController : MonoBehaviour
     {
         public LayerMask PlayerLayer;
+        public LayerMask FloorLayer;
+        public Action<PlayerSide> OnTouchedGround;
 
         private Rigidbody _rigidbody;
 
@@ -29,13 +32,12 @@ namespace Wonderseat
                 {
                     _rigidbody.useGravity = true;
                 }
-                _rigidbody.AddForce(collision.rigidbody.velocity, ForceMode.Impulse);
             }
-        }
-
-        private void OnCollisionExit(Collision collision)
-        {
-
+            
+            if ((FloorLayer.value & (1 << collision.gameObject.layer)) > 0) 
+            {
+                OnTouchedGround?.Invoke(transform.localPosition.x > 0 ? PlayerSide.Left : PlayerSide.Right);
+            }
         }
     }
 }

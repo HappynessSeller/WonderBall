@@ -10,6 +10,7 @@ namespace Wonderseat
         public float MoveSpeed = 1;
         public float SprintMultiplyer = 1.5f;
         public float JumpSpeed = 10;
+        public float minimalMass = 25;
         public LayerMask GroundLayers;
 
         private bool _grounded = false;
@@ -17,6 +18,9 @@ namespace Wonderseat
         private float _timeFromJumpStarted = 0;
         private const float _maxTimeToIncreaseJumpVelocity = 3f;
         private Rigidbody _rigidbody;
+        private float _defaultMass;
+        private Renderer[] _renderers;
+        private Color _defaultColor = Color.white;
 
         private void Awake()
         {
@@ -26,12 +30,12 @@ namespace Wonderseat
             }
 
             _rigidbody = GetComponent<Rigidbody>();
-        }
-
-        public void Reset(Vector3 position)
-        {
-            transform.position = position;
-            _rigidbody.velocity = Vector3.zero;
+            _defaultMass = _rigidbody.mass;
+            _renderers = GetComponentsInChildren<Renderer>();
+            if (_renderers.Length > 0)
+            {
+                _defaultColor = _renderers[0].material.color;
+            }
         }
 
         private void Update()
@@ -97,6 +101,36 @@ namespace Wonderseat
             {
                 _grounded = false;
             }
+        }
+
+        public void Reset(Vector3 position)
+        {
+            transform.position = position;
+            _rigidbody.velocity = Vector3.zero;
+        }
+
+        public void OnPointScored()
+        {
+            TrySetNewMass(_rigidbody.mass - 1);
+            foreach (var renderer in _renderers)
+            {
+                renderer.material.color = Color.green;
+            }
+        }
+
+        public void OnPointLost()
+        {
+            TrySetNewMass(_rigidbody.mass + 1);
+            foreach (var renderer in _renderers)
+            {
+                renderer.material.color = _defaultColor;
+            }
+        } 
+
+        private bool TrySetNewMass(float newMass)
+        {
+            _rigidbody.mass = Mathf.Clamp(newMass, minimalMass, _defaultMass);
+            return _rigidbody.mass == newMass;
         }
     }
 }

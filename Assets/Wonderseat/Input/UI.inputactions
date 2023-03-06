@@ -1,5 +1,5 @@
 {
-    "name": "Player",
+    "name": "UI",
     "maps": [
         {
             "name": "Player",
@@ -246,7 +246,7 @@
                 {
                     "name": "",
                     "id": "19f3c758-bb6d-43df-a109-7ad37743de2e",
-                    "path": "<Keyboard>/upArrow",
+                    "path": "<Keyboard>/numpad0",
                     "interactions": "",
                     "processors": "",
                     "groups": "Arrows",
@@ -290,22 +290,39 @@
                 {
                     "name": "",
                     "id": "ea785d1d-4593-443e-a585-db698b7f6f99",
-                    "path": "<Keyboard>/numpad0",
+                    "path": "<Keyboard>/rightShift",
                     "interactions": "",
                     "processors": "",
                     "groups": "Arrows",
                     "action": "Sprint",
                     "isComposite": false,
                     "isPartOfComposite": false
-                },
+                }
+            ]
+        },
+        {
+            "name": "UI",
+            "id": "72fae750-7200-4d77-8002-dd542d89fb6a",
+            "actions": [
+                {
+                    "name": "ResetGame",
+                    "type": "Button",
+                    "id": "7bf58027-65d6-426e-866d-5696b873d2f1",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
                 {
                     "name": "",
-                    "id": "81be6acc-3376-4538-8f9a-62490af5d658",
-                    "path": "<Keyboard>/rightShift",
+                    "id": "7efeb556-862f-4a15-bf5f-3cbb87cd5c7b",
+                    "path": "<Keyboard>/r",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Arrows",
-                    "action": "Sprint",
+                    "groups": "KeyboardMouse",
+                    "action": "ResetGame",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
