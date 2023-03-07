@@ -15,8 +15,9 @@ namespace Wonderseat
 
         public void OnBallTouchedGround(PlayerSide side)
         {
-            Players.OnPointScored(side);
             ResetGame();
+            Players.OnPointScored(side);
+            Ball.OnPointScored(side);
         }
 
         public void OnResetGame()

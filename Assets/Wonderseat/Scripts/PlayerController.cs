@@ -12,15 +12,18 @@ namespace Wonderseat
         public float JumpSpeed = 10;
         public float minimalMass = 25;
         public LayerMask GroundLayers;
+        public LayerMask WallLayers;
 
         private bool _grounded = false;
         private bool _canApplyAdditionalVerticalSpeed = false;
         private float _timeFromJumpStarted = 0;
-        private const float _maxTimeToIncreaseJumpVelocity = 3f;
+        private const float _maxTimeToIncreaseJumpVelocity = 2f;
         private Rigidbody _rigidbody;
         private float _defaultMass;
         private Renderer[] _renderers;
         private Color _defaultColor = Color.white;
+        private bool _nearWallLeft = false;
+        private bool _nearwallRight = false;
 
         private void Awake()
         {
@@ -43,6 +46,11 @@ namespace Wonderseat
             float speedY = Jump();
             float speedX = GetSpeedX();
 
+            if (_nearWallLeft && speedX < 0 || _nearwallRight && speedX > 0)
+            {
+                speedX = 0;
+            }
+
             _rigidbody.velocity = new Vector3(speedX, speedY, _rigidbody.velocity.z);
         }
 
@@ -61,7 +69,7 @@ namespace Wonderseat
                 }
                 else if (_timeFromJumpStarted < _maxTimeToIncreaseJumpVelocity && _canApplyAdditionalVerticalSpeed)
                 {
-                    float acceleration = JumpSpeed / 1000 / (1 + _timeFromJumpStarted);
+                    float acceleration = JumpSpeed / 1300 / (1 + _timeFromJumpStarted);
                     speed = _rigidbody.velocity.y + acceleration;
                 }
             }
@@ -93,6 +101,17 @@ namespace Wonderseat
                 _grounded = true;
                 _timeFromJumpStarted = 0;
             }
+            if ((WallLayers.value & (1 << collision.gameObject.layer)) > 0) 
+            {
+                if (collision.transform.position.x < transform.position.x)
+                {
+                    _nearWallLeft = true;
+                }
+                else
+                {
+                    _nearwallRight = true;
+                }
+            }
         }
 
         private void OnCollisionExit(Collision collision)
@@ -100,6 +119,11 @@ namespace Wonderseat
             if ((GroundLayers.value & (1 << collision.gameObject.layer)) > 0) 
             {
                 _grounded = false;
+            }
+            if ((WallLayers.value & (1 << collision.gameObject.layer)) > 0) 
+            {
+                _nearWallLeft = false;
+                _nearwallRight = false;
             }
         }
 
