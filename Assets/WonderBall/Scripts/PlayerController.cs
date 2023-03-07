@@ -94,6 +94,39 @@ namespace Wonderseat
             return speed;
         }
 
+        public void Reset(Vector3 position)
+        {
+            transform.position = position;
+            _rigidbody.velocity = Vector3.zero;
+            SetColor(_defaultColor);
+        }
+
+        public void OnPointScored()
+        {
+            TrySetNewMass(_rigidbody.mass - 1);
+            SetColor(Color.green);
+        }
+
+        public void OnPointLost()
+        {
+            TrySetNewMass(_rigidbody.mass + 1);
+            SetColor(_defaultColor);
+        } 
+
+        private void SetColor(Color color)
+        {
+            foreach (var renderer in _renderers)
+            {
+                renderer.material.color = color;
+            }
+        }
+
+        private bool TrySetNewMass(float newMass)
+        {
+            _rigidbody.mass = Mathf.Clamp(newMass, minimalMass, _defaultMass);
+            return _rigidbody.mass == newMass;
+        }
+
         private void OnCollisionEnter(Collision collision)
         {
             if ((GroundLayers.value & (1 << collision.gameObject.layer)) > 0) 
@@ -125,36 +158,6 @@ namespace Wonderseat
                 _nearWallLeft = false;
                 _nearwallRight = false;
             }
-        }
-
-        public void Reset(Vector3 position)
-        {
-            transform.position = position;
-            _rigidbody.velocity = Vector3.zero;
-        }
-
-        public void OnPointScored()
-        {
-            TrySetNewMass(_rigidbody.mass - 1);
-            foreach (var renderer in _renderers)
-            {
-                renderer.material.color = Color.green;
-            }
-        }
-
-        public void OnPointLost()
-        {
-            TrySetNewMass(_rigidbody.mass + 1);
-            foreach (var renderer in _renderers)
-            {
-                renderer.material.color = _defaultColor;
-            }
-        } 
-
-        private bool TrySetNewMass(float newMass)
-        {
-            _rigidbody.mass = Mathf.Clamp(newMass, minimalMass, _defaultMass);
-            return _rigidbody.mass == newMass;
         }
     }
 }
